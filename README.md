@@ -30,14 +30,40 @@ api_url: "/set.Cmdr?"
 
 # operation 
 
-botpower.py -o 1 -a on
+
+**example(s)**
+
+turn outlet #1 on.
+
+``` text
+% ./botpower.py -a on -o 1
+outlet: 1
+action: on
+current outlet status
+---------------------
+outlet: 1 power: on
+```
+
+display the current state of the outlets.  note, that when the action is `display` we require but ignore the `-o` flag.
+
+``` text
+% ./botpower.py -a display -o 1
+outlet: 1
+action: display
+current outlet status
+---------------------
+outlet: 1 power: on
+outlet: 2 power: off
+outlet: 3 power: off
+outlet: 4 power: off
+```
 
 ## mandatory arguments
 ```
 -o, --outlet
 
 outlet to manipulate, valid values are as follows:
-single value 
+single value from 1 - 4. 1 at a time.
 all: execute the associated action on all ports
 
 -a, --action
