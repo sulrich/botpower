@@ -127,7 +127,6 @@ def main():
     else:
         query_params += "cmd=getpower"
 
-    # import the configuration file
     url = "http://" + cfg["hostname"] + cfg["api_url"] + query_params
 
     r = requests.get(url, auth=(cfg["username"], cfg["password"]))
