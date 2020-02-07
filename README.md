@@ -1,6 +1,6 @@
 # overview
 
-this is a python script to manipulate the power on an aviosys [ip power 9258](http://www.aviosys.com/9258.html) managed outlet.  this uses their lame HTTP interface in order to manipulate the outlet state.
+this is a python script to manipulate the power on an aviosys [ip power 9258](http://www.aviosys.com/products/9258.html) managed outlet.  this uses their lame HTTP interface in order to manipulate the outlet state.
 
 this thing has an exceedingly crappy user interface, i don't recommend it to anyone except on pure basis of price.  this script simply wrappers some of the more annoying things associated with their HTTP interface.
 
