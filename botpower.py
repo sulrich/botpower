@@ -105,7 +105,7 @@ def main():
         config_file = args.config_file
 
     with open(config_file) as yaml_file:
-        cfg = yaml.load(yaml_file)
+        cfg = yaml.load(yaml_file, Loader=yaml.BaseLoader)
 
     # command line argument overrides
     if args.hostname:
