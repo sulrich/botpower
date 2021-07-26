@@ -108,10 +108,7 @@ def parse_args():
 
 def print_usage():
     return """
-
 botpower.py --action <display,on,off> --outlet <1,2,3,4,all>
-
-example(s):
 
 turn outlet #1 on.
 
@@ -122,8 +119,7 @@ current outlet status
 ---------------------
 outlet: 1 power: on
 
-display the current state of the outlets.  note, that when the action is
-'display' we require but ignore the -o flag.
+display the current state of the outlets.
 
 % botpower.py -a display 
 outlet: 1
@@ -137,26 +133,26 @@ outlet: 4 power: off
 
 -o, --outlet
 
-outlet to manipulate, valid values are as follows:
-single value from 1 - 4. 1 at a time.
-all: execute the associated action on all ports
+  outlet to manipulate, valid values are as follows:
+  single value from 1 - 4. 1 at a time.
+  all: execute the associated action on all ports
 
 -a, --action
 
-the action to effect upon an outlet. valid actions are as follows:
+  the action to effect upon an outlet. valid actions are as follows:
 
-on  - turn the given outlet on
-off - turn the given outlet off
-display - display the current state of the outlets
-```
+  on  - turn the given outlet on
+  off - turn the given outlet off
+  display - display the current state of the outlets
+
 optional arguments
 
-these will override your config file values.
--u, --username (default: admin)
--p, --password (default: 12345678) - this is factory default
-
--c, --config - alternate configuration file to use. 
-
+  these will override your config file values.
+  -u, --username (default: admin)
+  -p, --password (default: 12345678) - this is factory default
+  
+  -c, --config - alternate configuration file to use. 
+  
 """
 
 
