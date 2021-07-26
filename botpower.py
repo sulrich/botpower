@@ -12,9 +12,9 @@ import yaml
 def set_outlet(outlet, action):
     """set_outlet
 
-create the parameters for submission to the HTTP endpoint. if this is
-a single port, then return a single value in the dict. if outlet =
-all, then iterate through the range of outlets
+    create the parameters for submission to the HTTP endpoint. if this is
+    a single port, then return a single value in the dict. if outlet =
+    all, then iterate through the range of outlets
 
     """
     q_params = ""
@@ -37,7 +37,7 @@ all, then iterate through the range of outlets
 
 def parse_response(response_txt):
     """parse_response(string) - parse the request response nicely output
-the results of the command execution.
+    the results of the command execution.
 
     """
     resp = ""
@@ -54,16 +54,8 @@ the results of the command execution.
     return resp
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-o",
-        "--outlet",
-        dest="outlet",
-        required=True,
-        choices=["1", "2", "3", "4", "all"],
-        help="outlet to set the power state on, values: 1-4, all",
-    )
+def parse_args():
+    parser = argparse.ArgumentParser(usage=print_usage())
     parser.add_argument(
         "-a",
         "--action",
@@ -71,6 +63,14 @@ def main():
         required=True,
         choices=["on", "off", "display"],
         help="action to take upon the associated outlet(s)",
+    )
+
+    parser.add_argument(
+        "-o",
+        "--outlet",
+        dest="outlet",
+        choices=["1", "2", "3", "4", "all"],
+        help="outlet to set the power state on, values: 1-4, all",
     )
 
     parser.add_argument(
@@ -98,6 +98,71 @@ def main():
         help="password for authentication to the IP9258",
     )
     args = parser.parse_args()
+
+    if args.action != "display" and not args.outlet:
+        print_usage()
+        exit()
+
+    return args
+
+
+def print_usage():
+    return """
+
+botpower.py --action <display,on,off> --outlet <1,2,3,4,all>
+
+example(s):
+
+turn outlet #1 on.
+
+% botpower.py -a on -o 1
+outlet: 1
+action: on
+current outlet status
+---------------------
+outlet: 1 power: on
+
+display the current state of the outlets.  note, that when the action is
+'display' we require but ignore the -o flag.
+
+% botpower.py -a display 
+outlet: 1
+action: display
+current outlet status
+---------------------
+outlet: 1 power: on
+outlet: 2 power: off
+outlet: 3 power: off
+outlet: 4 power: off
+
+-o, --outlet
+
+outlet to manipulate, valid values are as follows:
+single value from 1 - 4. 1 at a time.
+all: execute the associated action on all ports
+
+-a, --action
+
+the action to effect upon an outlet. valid actions are as follows:
+
+on  - turn the given outlet on
+off - turn the given outlet off
+display - display the current state of the outlets
+```
+optional arguments
+
+these will override your config file values.
+-u, --username (default: admin)
+-p, --password (default: 12345678) - this is factory default
+
+-c, --config - alternate configuration file to use. 
+
+"""
+
+
+def main():
+    # process CLI args and dependencies
+    args = parse_args()
 
     # load default configuration
     config_file = str(Path.home()) + "/.config/botpower.cfg"
