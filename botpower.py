@@ -54,8 +54,8 @@ def parse_response(response_txt):
     return resp
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(usage=print_usage())
+def parse_cli_args():
+    parser = argparse.ArgumentParser(usage=arg_usage())
     parser.add_argument(
         "-a",
         "--action",
@@ -100,19 +100,67 @@ def parse_args():
     args = parser.parse_args()
 
     if args.action != "display" and not args.outlet:
-        print_usage()
+        print(arg_usage())
         exit()
 
     return args
 
 
-def print_usage():
+def main():
+    # process CLI args and dependencies
+    opts = parse_cli_args()
+
+    # load default configuration
+    config_file = str(Path.home()) + "/.config/botpower.cfg"
+    if opts.config_file:
+        config_file = opts.config_file
+
+    with open(config_file) as yaml_file:
+        cfg = yaml.load(yaml_file, Loader=yaml.BaseLoader)
+
+    # command line argument overrides
+    if opts.hostname:
+        cfg["hostname"] = opts.hostname
+
+    if opts.http_user:
+        cfg["username"] = opts.http_user
+
+    if opts.http_pass:
+        cfg["password"] = opts.http_pass
+
+    print("outlet:", opts.outlet)
+    print("action:", opts.action)
+
+    query_params = ""
+    if opts.action != "display":
+        query_params += "cmd=setpower+"
+        query_params += set_outlet(opts.outlet, opts.action)
+    else:
+        query_params += "cmd=getpower"
+
+    url = "http://" + cfg["hostname"] + cfg["api_url"] + query_params
+
+    r = requests.get(url, auth=(cfg["username"], cfg["password"]))
+    if r.status_code != 200:
+        print("FAILED REQUEST")
+        print("url:", r.url)
+        print("status code:", r.status_code)
+        print("headers\n", "-" * 70, sep="")
+        print(r.headers)
+
+    else:
+        out = parse_response(r.text)
+        print(out)
+
+
+def arg_usage():
+
     return """
 botpower.py --action <display,on,off> --outlet <1,2,3,4,all>
 
 turn outlet #1 on.
 
-% botpower.py -a on -o 1
+botpower.py -a on -o 1
 outlet: 1
 action: on
 current outlet status
@@ -121,7 +169,7 @@ outlet: 1 power: on
 
 display the current state of the outlets.
 
-% botpower.py -a display 
+botpower.py -a display 
 outlet: 1
 action: display
 current outlet status
@@ -154,53 +202,6 @@ optional arguments
   -c, --config - alternate configuration file to use. 
   
 """
-
-
-def main():
-    # process CLI args and dependencies
-    args = parse_args()
-
-    # load default configuration
-    config_file = str(Path.home()) + "/.config/botpower.cfg"
-    if args.config_file:
-        config_file = args.config_file
-
-    with open(config_file) as yaml_file:
-        cfg = yaml.load(yaml_file, Loader=yaml.BaseLoader)
-
-    # command line argument overrides
-    if args.hostname:
-        cfg["hostname"] = args.hostname
-
-    if args.http_user:
-        cfg["username"] = args.http_user
-
-    if args.http_pass:
-        cfg["password"] = args.http_pass
-
-    print("outlet:", args.outlet)
-    print("action:", args.action)
-
-    query_params = ""
-    if args.action != "display":
-        query_params += "cmd=setpower+"
-        query_params += set_outlet(args.outlet, args.action)
-    else:
-        query_params += "cmd=getpower"
-
-    url = "http://" + cfg["hostname"] + cfg["api_url"] + query_params
-
-    r = requests.get(url, auth=(cfg["username"], cfg["password"]))
-    if r.status_code != 200:
-        print("FAILED REQUEST")
-        print("url:", r.url)
-        print("status code:", r.status_code)
-        print("headers\n", "-" * 70, sep="")
-        print(r.headers)
-
-    else:
-        out = parse_response(r.text)
-        print(out)
 
 
 if __name__ == "__main__":
