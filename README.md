@@ -35,7 +35,6 @@ api_url: "/set.Cmdr?"
 
 # operation 
 
-
 **example(s)**
 
 turn outlet #1 on.
@@ -64,13 +63,7 @@ outlet: 4 power: off
 ```
 
 ## mandatory arguments
-```
--o, --outlet
-
-outlet to manipulate, valid values are as follows:
-- single value from 1 - 4. 1 at a time.
-- all: execute the associated action on all ports
-
+```text
 -a, --action
 
 the action to effect upon an outlet. valid actions are as follows:
@@ -78,11 +71,24 @@ the action to effect upon an outlet. valid actions are as follows:
 - on  - turn the given outlet on
 - off - turn the given outlet off
 - display - display the current state of the outlets
+
+if the action is 'on' or 'off' you will need to provid the outlet that you wish
+to address the action at with the `-o` argument. 
+
+-o, --outlet
+
+outlet to manipulate, valid values are as follows:
+- single value from 1 - 4. 1 at a time.
+- all: execute the associated action on all ports
+
 ```
+
 ## optional arguments
 
+``
+
 these will override your config file values.
-```
+```text
 -u, --username (default: admin)
 -p, --password (default: 12345678) - this is factory default
 
